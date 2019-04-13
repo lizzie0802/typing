@@ -17,7 +17,7 @@ export class Bomb extends React.Component<SBTS, {}> {
         style={{
           left: x * 25,
           top: y * 25,
-          background: Bomb.getColor(y)
+          background: Bomb.getColor(y),
         }}
       >
         {text.toUpperCase()}
