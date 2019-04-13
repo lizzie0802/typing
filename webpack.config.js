@@ -43,7 +43,7 @@ module.exports = (env) => {
     },
     resolve: {
       plugins: [new TsconfigPathsPlugin({configFile: tsconfigPath})],
-      extensions: ['.ts', '.js', '.tsx', '.jsx'],
+      extensions: ['.js', '.ts', '.tsx', '.jsx'],
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -65,7 +65,8 @@ module.exports = (env) => {
         {
           test: /\.([tj])sx?$/,
           use: 'ts-loader',
-          exclude: /node_modules/,
+          exclude: [/node_modules/, /__tests__/],
+
         },
       ],
     },

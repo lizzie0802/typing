@@ -1,14 +1,12 @@
 import React from 'react'
+import {DEFAULT_HP} from './constants'
+import {Dropper} from './dropper'
 
 
-const dataMap = {
-  hello: 'Hello, World!',
-}
-
-export class App extends React.Component<{}> {
+export class App extends React.Component<{}, {}> {
   render() {
     return (
-      <div>{dataMap.hello}</div>
+      <Dropper />
     )
   }
 }
