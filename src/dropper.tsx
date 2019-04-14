@@ -9,6 +9,8 @@ import {
   MAX_COLUMN,
   MIN_BOMB_SIZE,
   COLOR_BG,
+  COLOR_SAFE,
+  COLOR_WORRY,
   COLOR_DANGER,
 } from './constants'
 import {Bomb} from './bomb'
@@ -18,17 +20,20 @@ import {generateKey, generatePosition} from './utils'
 
 const Wrapper = styled.div`
   position: relative;
-  margin: 40px auto;
+  margin: 80px auto 40px;
   width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
   min-width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
   height: ${MIN_BOMB_SIZE * MAX_ROW}px;
   min-height: ${MIN_BOMB_SIZE * MAX_ROW}px;
+  box-sizing: content-box;
+  border-top: 1px solid ${COLOR_SAFE};
   border-bottom: 1px solid ${COLOR_DANGER};
   
   .score {
-    position: fixed;
-    top: 5px;
-    left: 5px;
+    position: absolute;
+    top: -20px;
+    right: 5px;
+    transition: color ${DEFAULT_DROP_INTERVAL/1000}s linear;
   }
 
   .duang {
@@ -71,6 +76,8 @@ export class Dropper extends React.Component<{}, DropperState> {
   render() {
     const {hp, bombs} = this.state
 
+    const color = Dropper.getColor(DEFAULT_HP - hp, DEFAULT_HP)
+
     return (
       <Wrapper>
         <Global styles={css`
@@ -78,13 +85,14 @@ export class Dropper extends React.Component<{}, DropperState> {
             background: ${COLOR_BG};
           }
         `} />
-        <div className='score'>{hp}</div>
+        <div className='score' style={{color}}>{hp}</div>
         {bombs.map(bombWithKey => (
           <Bomb
             key={bombWithKey.key}
             text={bombWithKey.text}
             x={bombWithKey.x}
             y={bombWithKey.y}
+            color={Dropper.getColor(bombWithKey.y)}
           />
         ))}
       </Wrapper>
@@ -181,6 +189,16 @@ export class Dropper extends React.Component<{}, DropperState> {
     }
 
     return bombsLeft
+  }
+
+  private static getColor(val: number, max: number = MAX_ROW) {
+    let portion = val / max
+    if (portion > 0.8) {
+      return COLOR_DANGER
+    } else if (portion > 0.4) {
+      return COLOR_WORRY
+    }
+    return COLOR_SAFE
   }
 }
 
