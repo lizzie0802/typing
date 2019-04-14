@@ -1,28 +1,34 @@
 import React from 'react'
 // import styled from '@emotion/styled'
-import {DEFAULT_HP, DEFAULT_DROP_INTERVAL, MAX_ROW} from './constants'
+import styled from '@emotion/styled/dist/styled.cjs.js'
+import {DEFAULT_HP, DEFAULT_DROP_INTERVAL, MAX_ROW, MIN_BOMB_SIZE} from './constants'
 import {Bomb} from './bomb'
 import {BombType} from './types'
 import {generateKey, generatePosition} from './utils'
+import {prepareScreen} from './before_load'
+
+const {width, height} = prepareScreen()
 
 
-// const Wrapper = styled.div`
-//   position: fixed;
-//   top: 0;
-//   right: 0;
-//   bottom: 0;
-//   left: 0;
-//   background: #89fffa;
-//
-//   .duang {
-//     position: absolute;
-//     min-width: 10px;
-//     min-height: 10px;
-//     width: 10px;
-//     height: 10px;
-//     background: red;
-//   }
-// `
+const Wrapper = styled.div`
+  position: fixed;
+  top: 40px;
+  left: 40px;
+  bottom: 40px;
+  right: 40px;
+  background: #eff2dd;
+
+  .duang {
+    position: absolute;
+    font-size: 18px;
+    width: ${MIN_BOMB_SIZE}px;
+    height: ${MIN_BOMB_SIZE}px;
+    color: #eff2dd;
+    text-align: center;
+    vertical-align: baseline;
+    transition: all ${DEFAULT_DROP_INTERVAL/1000}s linear;
+  }
+`
 
 interface BombWithKey extends BombType {
   key: string
@@ -52,7 +58,7 @@ export class Dropper extends React.Component<{}, DropperState> {
     const {hp, bombs} = this.state
 
     return (
-      <div className='dropper-f2'>
+      <Wrapper>
         <div>{hp}</div>
         {bombs.map(bombWithKey => (
           <Bomb
@@ -62,7 +68,7 @@ export class Dropper extends React.Component<{}, DropperState> {
             y={bombWithKey.y}
           />
         ))}
-      </div>
+      </Wrapper>
     )
   }
 

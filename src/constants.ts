@@ -2,6 +2,7 @@ export const DEFAULT_HP = 100
 export const DEFAULT_DROP_INTERVAL = 500
 export const MAX_COLUMN = 30
 export const MAX_ROW = 20
+export const MIN_BOMB_SIZE = 20
 export const COLOR_BG = '#eff2dd'
 export const COLOR_SAFE = '#fcda05'
 export const COLOR_WORRY = '#ee4848'
