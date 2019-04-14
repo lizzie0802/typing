@@ -5,9 +5,6 @@ import {DEFAULT_HP, DEFAULT_DROP_INTERVAL, MAX_ROW, MIN_BOMB_SIZE} from './const
 import {Bomb} from './bomb'
 import {BombType} from './types'
 import {generateKey, generatePosition} from './utils'
-import {prepareScreen} from './before_load'
-
-const {width, height} = prepareScreen()
 
 
 const Wrapper = styled.div`
@@ -17,6 +14,12 @@ const Wrapper = styled.div`
   bottom: 40px;
   right: 40px;
   background: #eff2dd;
+  
+  .score {
+    position: fixed;
+    top: 5px;
+    left: 5px;
+  }
 
   .duang {
     position: absolute;
@@ -59,7 +62,7 @@ export class Dropper extends React.Component<{}, DropperState> {
 
     return (
       <Wrapper>
-        <div>{hp}</div>
+        <div className='score'>{hp}</div>
         {bombs.map(bombWithKey => (
           <Bomb
             key={bombWithKey.key}
