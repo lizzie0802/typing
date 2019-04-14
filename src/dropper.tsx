@@ -1,19 +1,29 @@
 import React from 'react'
 // import styled from '@emotion/styled'
+import {Global, css} from '@emotion/core/dist/core.cjs.js'
 import styled from '@emotion/styled/dist/styled.cjs.js'
-import {DEFAULT_HP, DEFAULT_DROP_INTERVAL, MAX_ROW, MIN_BOMB_SIZE} from './constants'
+import {
+  DEFAULT_HP,
+  DEFAULT_DROP_INTERVAL,
+  MAX_ROW,
+  MAX_COLUMN,
+  MIN_BOMB_SIZE,
+  COLOR_BG,
+  COLOR_DANGER,
+} from './constants'
 import {Bomb} from './bomb'
 import {BombType} from './types'
 import {generateKey, generatePosition} from './utils'
 
 
 const Wrapper = styled.div`
-  position: fixed;
-  top: 40px;
-  left: 40px;
-  bottom: 40px;
-  right: 40px;
-  background: #eff2dd;
+  position: relative;
+  margin: 40px auto;
+  width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
+  min-width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
+  height: ${MIN_BOMB_SIZE * MAX_ROW}px;
+  min-height: ${MIN_BOMB_SIZE * MAX_ROW}px;
+  border-bottom: 1px solid ${COLOR_DANGER};
   
   .score {
     position: fixed;
@@ -26,10 +36,10 @@ const Wrapper = styled.div`
     font-size: 18px;
     width: ${MIN_BOMB_SIZE}px;
     height: ${MIN_BOMB_SIZE}px;
-    color: #eff2dd;
+    color: ${COLOR_BG};
     text-align: center;
     vertical-align: baseline;
-    transition: all ${DEFAULT_DROP_INTERVAL/1000}s linear;
+    transition: top ${DEFAULT_DROP_INTERVAL/1000}s linear;
   }
 `
 
@@ -42,19 +52,20 @@ interface DropperState {
   bombs: BombWithKey[]
 }
 
+const DEFAULT_STATE: DropperState = {hp: 100, bombs: []}
+
 export class Dropper extends React.Component<{}, DropperState> {
   private timer: number
   private counter: number
+  private dropping: boolean
 
   constructor(props: {}) {
     super(props)
 
-    this.state = {
-      hp: DEFAULT_HP,
-      bombs: [],
-    }
+    this.state = {...DEFAULT_STATE}
 
     this.counter = 0
+    this.dropping = false
   }
 
   render() {
@@ -62,6 +73,11 @@ export class Dropper extends React.Component<{}, DropperState> {
 
     return (
       <Wrapper>
+        <Global styles={css`
+          html, body {
+            background: ${COLOR_BG};
+          }
+        `} />
         <div className='score'>{hp}</div>
         {bombs.map(bombWithKey => (
           <Bomb
@@ -76,8 +92,7 @@ export class Dropper extends React.Component<{}, DropperState> {
   }
 
   componentDidMount() {
-    this.timer = setInterval(() => this.drop(), DEFAULT_DROP_INTERVAL)
-    this.registerStopper()
+    this.startOrResume()
     document.addEventListener('keydown', this.inputHandler)
   }
 
@@ -85,6 +100,7 @@ export class Dropper extends React.Component<{}, DropperState> {
     const {hp, bombs} = this.state
     if (hp <= 0) {
       clearInterval(this.timer)
+      this.dropping = false
     } else {
       const newBomb: BombWithKey = {
         text: generateKey(),
@@ -103,24 +119,52 @@ export class Dropper extends React.Component<{}, DropperState> {
   private registerStopper() {
     (window as any).stop = () => {
       clearInterval(this.timer)
+      this.dropping = false
     }
   }
 
   private inputHandler = (e: KeyboardEvent) => {
     const {bombs} = this.state
     const {key} = e
-    let index = -1
-    for (let i = 0; i < bombs.length; i++) {
-      // console.log('ts sb ma', bombs[i], key, i, index)
-      if (bombs[i].text === key) {
-        index = i as any
-        break
+    if (key === ' ') { // space
+      if (this.dropping) {
+        this.pause()
+      } else {
+        this.startOrResume()
+      }
+    } else if(this.dropping) {
+      let index = -1
+      for (let i = 0; i < bombs.length; i++) {
+        if (bombs[i].text === key) {
+          index = i as any
+          break
+        }
+      }
+      if (index >= 0) {
+        const newBombs = [...bombs]
+        newBombs.splice(index, 1)
+        this.setState({bombs: newBombs})
       }
     }
-    if (index >= 0) {
-      const newBombs = [...bombs]
-      newBombs.splice(index, 1)
-      this.setState({bombs: newBombs})
+  }
+
+  private pause() {
+    clearInterval(this.timer)
+    this.dropping = false
+  }
+
+  private startOrResume() {
+    const {hp, bombs} = this.state
+
+    const startDropping = () => {
+      this.timer = setInterval(() => this.drop(), DEFAULT_DROP_INTERVAL)
+      this.dropping = true
+    }
+
+    if (hp <= 0) {
+      this.setState({...DEFAULT_STATE}, startDropping)
+    } else {
+      startDropping()
     }
   }
 

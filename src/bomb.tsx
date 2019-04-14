@@ -1,6 +1,6 @@
 import React from 'react'
 import {BombType} from './types'
-import {COLOR_SAFE, COLOR_WORRY, COLOR_DANGER, MAX_ROW} from './constants'
+import {COLOR_SAFE, COLOR_WORRY, COLOR_DANGER, MAX_ROW, MIN_BOMB_SIZE} from './constants'
 
 
 interface SBTS extends BombType {
@@ -15,8 +15,8 @@ export class Bomb extends React.Component<SBTS, {}> {
       <div
         className='duang'
         style={{
-          left: x * 25,
-          top: y * 25,
+          left: x * MIN_BOMB_SIZE,
+          top: y * MIN_BOMB_SIZE,
           background: Bomb.getColor(y),
         }}
       >
