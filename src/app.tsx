@@ -4,7 +4,6 @@ import {Global, css} from '@emotion/core/dist/core.cjs.js'
 import styled from '@emotion/styled/dist/styled.cjs.js'
 import {
   DEFAULT_HP,
-  DEFAULT_DROP_INTERVAL,
   MAX_ROW,
   MAX_COLUMN,
   MIN_BOMB_SIZE,
@@ -16,11 +15,11 @@ import {
 import {Bomb} from './bomb'
 import {BombType} from './types'
 import {generateKey, generatePosition} from './utils'
-
+import Slider from '@material-ui/lab/Slider';
 
 const Wrapper = styled.div`
   position: relative;
-  margin: 80px auto 40px;
+  margin: 20px auto 40px;
   width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
   min-width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
   height: ${MIN_BOMB_SIZE * MAX_ROW}px;
@@ -33,7 +32,7 @@ const Wrapper = styled.div`
     position: absolute;
     top: -20px;
     right: 5px;
-    transition: color ${DEFAULT_DROP_INTERVAL/1000}s linear;
+    transition: color ${(props: any) => props.time/1000}s linear;
   }
 
   .duang {
@@ -44,7 +43,20 @@ const Wrapper = styled.div`
     color: ${COLOR_BG};
     text-align: center;
     vertical-align: baseline;
-    transition: top ${DEFAULT_DROP_INTERVAL/1000}s linear;
+    transition: top ${(props: any) => props.time/1000}s linear;
+  }
+`
+const SetTimeWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 50px;
+  .label {
+    width: 100px;
+  }
+
+  .slider-wrapper {
+    width: 300px;
+    margin: 0 10px;
   }
 `
 
@@ -55,9 +67,10 @@ interface BombWithKey extends BombType {
 interface DropperState {
   hp: number // number of health-point left
   bombs: BombWithKey[]
+  time: number
 }
 
-const DEFAULT_STATE: DropperState = {hp: 100, bombs: []}
+const DEFAULT_STATE: DropperState = {hp: 100, bombs: [], time: 1000}
 
 export class App extends React.Component<{}, DropperState> {
   private timer: number
@@ -73,29 +86,47 @@ export class App extends React.Component<{}, DropperState> {
     this.dropping = false
   }
 
+  changeTime = (e, value) => {
+    const time = Number(value)
+    if (time) {
+      this.setState({ time }, () => {
+        this.pause()
+        this.startOrResume()
+      })
+    }
+  }
   render() {
-    const {hp, bombs} = this.state
-
+    const {hp, bombs, time} = this.state
     const color = App.getColor(DEFAULT_HP - hp, DEFAULT_HP)
 
     return (
-      <Wrapper>
-        <Global styles={css`
+      <>
+        <SetTimeWrapper className='set-time'>
+          <span className='label'>设置速度：</span>
+          <i>快</i>
+          <div className='slider-wrapper'>
+            <Slider value={this.state.time || 100} max={1000} min={100} onChange={this.changeTime}/>
+          </div>
+          <i>慢</i>
+        </SetTimeWrapper>
+        <Wrapper time={time}>
+          <Global styles={css`
           html, body {
             background: ${COLOR_BG};
           }
         `} />
-        <div className='score' style={{color}}>{hp}</div>
-        {bombs.map(bombWithKey => (
-          <Bomb
-            key={bombWithKey.key}
-            text={bombWithKey.text}
-            x={bombWithKey.x}
-            y={bombWithKey.y}
-            color={App.getColor(bombWithKey.y)}
-          />
-        ))}
-      </Wrapper>
+          <div className='score' style={{color}}>{hp}</div>
+          {bombs.map(bombWithKey => (
+            <Bomb
+              key={bombWithKey.key}
+              text={bombWithKey.text}
+              x={bombWithKey.x}
+              y={bombWithKey.y}
+              color={App.getColor(bombWithKey.y)}
+            />
+          ))}
+        </Wrapper>
+      </>
     )
   }
 
@@ -162,10 +193,10 @@ export class App extends React.Component<{}, DropperState> {
   }
 
   private startOrResume() {
-    const {hp, bombs} = this.state
+    const {hp, time} = this.state
 
     const startDropping = () => {
-      this.timer = setInterval(() => this.drop(), DEFAULT_DROP_INTERVAL)
+      this.timer = setInterval(() => this.drop(), time)
       this.dropping = true
     }
 
