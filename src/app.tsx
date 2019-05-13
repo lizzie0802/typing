@@ -49,7 +49,7 @@ const Wrapper = styled.div`
 const SetTimeWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-let: 400px;
+  margin-left: 400px;
   justify-content: center;
 
   .slider-wrapper {
