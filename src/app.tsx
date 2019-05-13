@@ -19,7 +19,7 @@ import Slider from '@material-ui/lab/Slider';
 
 const Wrapper = styled.div`
   position: relative;
-  margin: 20px auto 40px;
+  margin: 50px auto 40px;
   width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
   min-width: ${MIN_BOMB_SIZE * MAX_COLUMN}px;
   height: ${MIN_BOMB_SIZE * MAX_ROW}px;
@@ -49,10 +49,11 @@ const Wrapper = styled.div`
 const SetTimeWrapper = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 50px;
+  margin-let: 400px;
+  justify-content: center;
 
   .slider-wrapper {
-    width: 300px;
+    width: 100px;
     margin: 0 10px;
   }
 `
@@ -98,14 +99,6 @@ export class App extends React.Component<{}, DropperState> {
 
     return (
       <>
-        <SetTimeWrapper className='set-time'>
-          <span className='label'>当前速度：{(this.state.time/1000).toFixed(1)}秒</span>
-          <i>快</i>
-          <div className='slider-wrapper'>
-            <Slider value={this.state.time || 100} max={1000} min={100} onChange={this.changeTime}/>
-          </div>
-          <i>慢</i>
-        </SetTimeWrapper>
         <Wrapper time={time}>
           <Global styles={css`
           html, body {
@@ -123,6 +116,14 @@ export class App extends React.Component<{}, DropperState> {
             />
           ))}
         </Wrapper>
+        <SetTimeWrapper className='set-time'>
+          <span className='label'>当前速度：{(this.state.time/1000).toFixed(1)}秒</span>
+          <i>快</i>
+          <div className='slider-wrapper'>
+            <Slider value={this.state.time || 100} max={1000} min={100} onChange={this.changeTime}/>
+          </div>
+          <i>慢</i>
+        </SetTimeWrapper>
       </>
     )
   }
