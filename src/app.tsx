@@ -99,7 +99,7 @@ export class App extends React.Component<{}, DropperState> {
     return (
       <>
         <SetTimeWrapper className='set-time'>
-          <span className='label'>当前速度：{this.state.time/1000}秒</span>
+          <span className='label'>当前速度：{(this.state.time/1000).toFixed(1)}秒</span>
           <i>快</i>
           <div className='slider-wrapper'>
             <Slider value={this.state.time || 100} max={1000} min={100} onChange={this.changeTime}/>
