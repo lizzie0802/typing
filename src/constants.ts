@@ -4,9 +4,9 @@ export const MAX_COLUMN = 30
 export const MAX_ROW = 20
 export const MIN_BOMB_SIZE = 20
 export const COLOR_BG = '#f2f4fb'
-export const COLOR_SAFE = '#f8b500'
-export const COLOR_WORRY = '#d22780'
-export const COLOR_DANGER = '#5e227f'
+export const COLOR_SAFE = '#69f87f'
+export const COLOR_WORRY = '#d2be4f'
+export const COLOR_DANGER = '#7f2a0a'
 export const KEY_MAP = {
   'a': 'a',
   'b': 'b',

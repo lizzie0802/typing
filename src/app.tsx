@@ -88,8 +88,10 @@ export class App extends React.Component<{}, DropperState> {
     const time = Number(value)
     if (time) {
       this.setState({ time }, () => {
-        this.pause()
-        this.startOrResume()
+       if (this.dropping) {
+         this.pause()
+         this.startOrResume()
+       }
       })
     }
   }
